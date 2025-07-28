@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import calculatePrice from "../utils/calculatePrice";
 import formatPrice from "../utils/formatPrice";
-import { getVolumeDiscount } from "../utils/dataPrice";
 
 const formSchema = z.object({
   name: z
@@ -19,11 +18,11 @@ const formSchema = z.object({
     })
     .optional(),
   sector_of_activity: z.string().min(2, {
-    message: "O setor de atividade deve ter pelo menos 2 caracteres",
+    message: "Selecione um setor",
   }),
   annual_turnover: z
     .string()
-    .min(1, { message: "O faturam   ento anual deve ser maior que 0" })
+    .min(1, { message: "Selecione uma base do seu faturamento anual" })
     .optional(),
   lead_month: z
     .number()
@@ -43,26 +42,23 @@ export default function LeadPriceForm() {
     finalPrice: 0,
   });
 
+  const [sendData, setSendData] = useState({});
+
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
       email: "",
-      sector_of_activity: "Telecomunicações",
-      annual_turnover: "0",
+      sector_of_activity: "",
+      annual_turnover: "",
       lead_month: 10,
     },
   });
-
-  const onSubmit = (data: FormSchema) => {
-    console.log("data", data);
-  };
 
   const watchedSector = form.watch("sector_of_activity");
   const watchedTurnover = form.watch("annual_turnover");
   const watchedLeads = form.watch("lead_month");
 
-  console.log("watchedTurnover", watchedTurnover);
   useEffect(() => {
     if (watchedLeads && watchedSector && watchedTurnover) {
       const calculation = calculatePrice(
@@ -71,13 +67,6 @@ export default function LeadPriceForm() {
         watchedLeads,
       );
 
-      console.log("useeffect", calculation.totalPrice);
-      // const [priceBreakDown, setPriceBreakDown] = useState({
-      //   basePrice: 0,
-      //   turnoverMultiplayer: 1,
-      //   volumeDiscount: 0,
-      //   finalPrice: 0,
-      // });
       settotalMontlyPrice(calculation.totalPrice);
       setPriceBreakDown({
         basePrice: calculation.basePrice,
@@ -88,6 +77,18 @@ export default function LeadPriceForm() {
       setPricePerLead(calculation.finalPricePerLead);
     }
   }, [watchedLeads, watchedSector, watchedTurnover]);
+  const onSubmit = (data: FormSchema) => {
+    const price = formatPrice(totalMontlyPrice);
+    const newData = {
+      mensal: price,
+      name: data.name,
+      email: data.email,
+      sector: data.sector_of_activity,
+    };
+
+    console.log("data", JSON.stringify(newData));
+    setSendData(JSON.stringify(newData));
+  };
 
   return (
     <form
@@ -95,7 +96,7 @@ export default function LeadPriceForm() {
       onSubmit={form.handleSubmit(onSubmit)}
     >
       <div className="border border-green-400 p-4 text-2xl text-center fixed right-2 top-2 flex flex-col space-y-2">
-        <span>Valor mensal :{formatPrice(totalMontlyPrice)}</span>
+        <span>Valor media mensal :{formatPrice(totalMontlyPrice)}</span>
         <span> Preço por lead: {formatPrice(pricePerLead)}</span>
       </div>
       <div className="space-y-2 mt-8">
@@ -108,7 +109,12 @@ export default function LeadPriceForm() {
         <select
           {...form.register("sector_of_activity")}
           id="field_atividade"
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-lg font-medium rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full px-5 py-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          // className="bg-gray-50 border border-gray-300 text-gray-900 text-lg font-medium rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full px-5 py-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          className={`block w-full p-4 text-gray-900 border rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 ${
+            form.formState.errors.sector_of_activity
+              ? "border-red-500 focus:ring-red-500 focus:border-red-500 border-4"
+              : "border-gray-300"
+          }`}
         >
           <option value="Formação">Formação</option>
           <option value="Cosméticos">Cosméticos</option>
@@ -140,6 +146,22 @@ export default function LeadPriceForm() {
           </option>
           <option value="Outro">Outro</option>{" "}
         </select>
+        {form.formState.errors.sector_of_activity && (
+          <p className="text-red-500 text-sm mt-1 flex items-center">
+            <svg
+              className="w-4 h-4 mr-1"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fillRule="evenodd"
+                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                clipRule="evenodd"
+              />
+            </svg>
+            {form.formState.errors.sector_of_activity?.message}
+          </p>
+        )}
       </div>
 
       <div>
@@ -161,6 +183,23 @@ export default function LeadPriceForm() {
           <option value="5000000">5-10M</option>
           <option value="10000000">mais de 10M</option>
         </select>
+
+        {form.formState.errors.annual_turnover && (
+          <p className="text-red-500 text-sm mt-1 flex items-center">
+            <svg
+              className="w-4 h-4 mr-1"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fillRule="evenodd"
+                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                clipRule="evenodd"
+              />
+            </svg>
+            {form.formState.errors.annual_turnover?.message}
+          </p>
+        )}
       </div>
 
       <div>
@@ -197,6 +236,22 @@ export default function LeadPriceForm() {
           id="large-input"
           className="block w-full p-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
         />
+        {form.formState.errors.name && (
+          <p className="text-red-500 text-sm mt-1 flex items-center">
+            <svg
+              className="w-4 h-4 mr-1"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fillRule="evenodd"
+                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                clipRule="evenodd"
+              />
+            </svg>
+            {form.formState.errors.name?.message}
+          </p>
+        )}
       </div>
 
       <div className="mb-6">
@@ -212,6 +267,22 @@ export default function LeadPriceForm() {
           id="large-input"
           className="block w-full p-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
         />
+        {form.formState.errors.email && (
+          <p className="text-red-500 text-sm mt-1 flex items-center">
+            <svg
+              className="w-4 h-4 mr-1"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fillRule="evenodd"
+                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                clipRule="evenodd"
+              />
+            </svg>
+            {form.formState.errors.email?.message}
+          </p>
+        )}
       </div>
 
       <button
@@ -220,6 +291,11 @@ export default function LeadPriceForm() {
       >
         Próximo
       </button>
+
+      <div className="flex w-full mt-2 border border-blue-500 flex-col text-center justify-center">
+        <span className="flex font-bold">dados a ser enviado no email</span>
+        {sendData.toString()}
+      </div>
     </form>
   );
 }
