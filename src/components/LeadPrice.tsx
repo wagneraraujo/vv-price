@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import calculatePrice from "../utils/calculatePrice";
 import formatPrice from "../utils/formatPrice";
+import { getVolumeDiscount } from "../utils/dataPrice";
 
 const formSchema = z.object({
   name: z
@@ -71,7 +72,20 @@ export default function LeadPriceForm() {
       );
 
       console.log("useeffect", calculation.totalPrice);
+      // const [priceBreakDown, setPriceBreakDown] = useState({
+      //   basePrice: 0,
+      //   turnoverMultiplayer: 1,
+      //   volumeDiscount: 0,
+      //   finalPrice: 0,
+      // });
       settotalMontlyPrice(calculation.totalPrice);
+      setPriceBreakDown({
+        basePrice: calculation.basePrice,
+        turnoverMultiplayer: calculation.priceAfterTurnover,
+        finalPrice: calculation.totalPrice,
+        volumeDiscount: calculation.volumeDiscount,
+      });
+      setPricePerLead(calculation.finalPricePerLead);
     }
   }, [watchedLeads, watchedSector, watchedTurnover]);
 
@@ -80,9 +94,10 @@ export default function LeadPriceForm() {
       className="max-w-lg mx-auto space-y-8"
       onSubmit={form.handleSubmit(onSubmit)}
     >
-      <span className="border border-green-400 p-4 text-2xl text-center fixed right-2 top-2">
-        Valor mensal :{formatPrice(totalMontlyPrice)}
-      </span>
+      <div className="border border-green-400 p-4 text-2xl text-center fixed right-2 top-2 flex flex-col space-y-2">
+        <span>Valor mensal :{formatPrice(totalMontlyPrice)}</span>
+        <span> Preço por lead: {formatPrice(pricePerLead)}</span>
+      </div>
       <div className="space-y-2 mt-8">
         <label
           htmlFor="countries"

@@ -15,6 +15,10 @@ const calculatePrice = (
 
   return {
     totalPrice,
+    priceAfterTurnover,
+    finalPricePerLead,
+    basePrice,
+    volumeDiscount,
   };
 };
 
