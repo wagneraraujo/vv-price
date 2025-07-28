@@ -90,6 +90,7 @@ export default function LeadPriceForm() {
     setSendData(JSON.stringify(newData));
   };
 
+  console.log(priceBreakDown);
   return (
     <>
       <div className="border border-green-400 p-4 text-2xl text-center flex flex-col space-y-2 w-full mb-2">
