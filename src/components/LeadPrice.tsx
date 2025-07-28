@@ -1,7 +1,9 @@
-import React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
+import calculatePrice from "../utils/calculatePrice";
+import formatPrice from "../utils/formatPrice";
 
 const formSchema = z.object({
   name: z
@@ -31,32 +33,56 @@ const formSchema = z.object({
 type FormSchema = z.infer<typeof formSchema>;
 
 export default function LeadPriceForm() {
+  const [pricePerLead, setPricePerLead] = useState(0);
+  const [totalMontlyPrice, settotalMontlyPrice] = useState(0);
+  const [priceBreakDown, setPriceBreakDown] = useState({
+    basePrice: 0,
+    turnoverMultiplayer: 1,
+    volumeDiscount: 0,
+    finalPrice: 0,
+  });
 
-
-
-    
-    const form = useForm<FormSchema>({
+  const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
       email: "",
-      sector_of_activity: "",
-      annual_turnover: "",
+      sector_of_activity: "Telecomunicações",
+      annual_turnover: "0",
       lead_month: 10,
     },
   });
 
-  
-
   const onSubmit = (data: FormSchema) => {
     console.log("data", data);
   };
+
+  const watchedSector = form.watch("sector_of_activity");
+  const watchedTurnover = form.watch("annual_turnover");
+  const watchedLeads = form.watch("lead_month");
+
+  console.log("watchedTurnover", watchedTurnover);
+  useEffect(() => {
+    if (watchedLeads && watchedSector && watchedTurnover) {
+      const calculation = calculatePrice(
+        watchedSector,
+        watchedTurnover,
+        watchedLeads,
+      );
+
+      console.log("useeffect", calculation.totalPrice);
+      settotalMontlyPrice(calculation.totalPrice);
+    }
+  }, [watchedLeads, watchedSector, watchedTurnover]);
 
   return (
     <form
       className="max-w-lg mx-auto space-y-8"
       onSubmit={form.handleSubmit(onSubmit)}
     >
+      <span className="border border-green-400 p-4 text-2xl text-center fixed right-2 top-2">
+        Valor mensal :{formatPrice(totalMontlyPrice)}
+      </span>
       <div className="space-y-2 mt-8">
         <label
           htmlFor="countries"
@@ -125,9 +151,10 @@ export default function LeadPriceForm() {
       <div>
         <label
           htmlFor="large-range"
-        className="block mb-2 text-lg md:text-2xl font-medium text-[var(--text)] dark:text-white"
+          className="block mb-2 text-lg md:text-2xl font-medium text-[var(--text)] dark:text-white"
         >
-        Quantos leads por mês você deseja?        </label>
+          Quantos leads por mês você deseja?{" "}
+        </label>
         <input
           id="large-range"
           type="range"
@@ -139,43 +166,43 @@ export default function LeadPriceForm() {
           }}
           className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer range-lg dark:bg-gray-700"
         />
+        <p className="text-center text-2xl">{form.watch("lead_month")}</p>
       </div>
 
-     
-        <div className="mb-6">
-          <label
-            htmlFor="large-input"
-           className="block mb-2 text-lg md:text-2xl font-medium text-[var(--text)] dark:text-white"
-          >
-            Seu nome
-          </label>
-          <input
-            {...form.register("name")}
-            type="text"
-            id="large-input"
-            className="block w-full p-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          />
-        </div>
+      <div className="mb-6">
+        <label
+          htmlFor="large-input"
+          className="block mb-2 text-lg md:text-2xl font-medium text-[var(--text)] dark:text-white"
+        >
+          Seu nome
+        </label>
+        <input
+          {...form.register("name")}
+          type="text"
+          id="large-input"
+          className="block w-full p-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        />
+      </div>
 
-             
-        <div className="mb-6">
-          <label
-            htmlFor="large-input"
-           className="block mb-2 text-lg md:text-2xl font-medium text-[var(--text)] dark:text-white"
-          >
-            Seu email
-          </label>
-          <input
-            {...form.register("email")}
-            type="email"
-            id="large-input"
-            className="block w-full p-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          />
-        </div>
-      
+      <div className="mb-6">
+        <label
+          htmlFor="large-input"
+          className="block mb-2 text-lg md:text-2xl font-medium text-[var(--text)] dark:text-white"
+        >
+          Seu email
+        </label>
+        <input
+          {...form.register("email")}
+          type="email"
+          id="large-input"
+          className="block w-full p-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        />
+      </div>
 
-      <button   type="submit"
- className="cursor-pointer text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+      <button
+        type="submit"
+        className="cursor-pointer text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+      >
         Próximo
       </button>
     </form>
