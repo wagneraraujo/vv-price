@@ -144,11 +144,6 @@ export default function LeadPriceForm() {
 
   return (
     <>
-      <div className="border border-green-400 p-4 text-2xl text-center flex flex-col space-y-2 w-full mb-2">
-        <span>Valor media mensal :{formatPrice(totalMontlyPrice)}</span>
-        <span> Preço por lead: {formatPrice(pricePerLead)}</span>
-      </div>
-
       <form
         className="max-w-lg mx-auto space-y-8"
         onSubmit={form.handleSubmit(onSubmit)}
@@ -443,6 +438,10 @@ export default function LeadPriceForm() {
         {currentStep === 3 && (
           <>
             <h2 className="text-2xl">{STEPS[currentStep - 1].title}</h2>
+            <div className="border border-green-400 p-4 text-2xl text-center flex flex-col space-y-2 w-full mb-2">
+              <span>Valor media mensal :{formatPrice(totalMontlyPrice)}</span>
+              <span> Preço por lead: {formatPrice(pricePerLead)}</span>
+            </div>
           </>
         )}
         <button
