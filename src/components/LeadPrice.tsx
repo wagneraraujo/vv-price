@@ -110,6 +110,7 @@ export default function LeadPriceForm() {
   const watchedSector = form.watch("sector_of_activity");
   const watchedTurnover = form.watch("annual_turnover");
   const watchedLeads = form.watch("lead_month");
+  console.log(priceBreakDown);
 
   useEffect(() => {
     if (watchedLeads && watchedSector && watchedTurnover) {
