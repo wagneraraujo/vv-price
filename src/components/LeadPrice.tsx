@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { boolean, string, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import calculatePrice from "../utils/calculatePrice";
@@ -28,6 +28,13 @@ const formSchema = z.object({
     .number()
     .min(1, { message: "O lead deve ser maior que 0" })
     .optional(),
+  role: string().optional(),
+  city: string().optional(),
+  website: string().optional(),
+  socialLinks: string().optional(),
+  investiment_mkt: boolean({
+    message: "Selecione se já investiu em Marketing ou não",
+  }),
 });
 
 type FormSchema = z.infer<typeof formSchema>;
@@ -48,10 +55,11 @@ const STEPS: STEP[] = [
     title: "Informações para Contato",
     fields: ["name", "email", "phone"],
   },
-  // {
-  //   id: 3,
-  //   title: "Resultado : Valor ou média aproximado para seu investimento",
-  // },
+  {
+    id: 3,
+    title: "Resultado : Valor ou média aproximado para seu investimento",
+    fields: [],
+  },
 ];
 
 export default function LeadPriceForm() {
@@ -75,6 +83,12 @@ export default function LeadPriceForm() {
       sector_of_activity: "",
       annual_turnover: "",
       lead_month: 10,
+      city: "",
+      phone: "",
+      role: "",
+      socialLinks: "",
+      website: "",
+      investiment_mkt: false,
     },
   });
 
@@ -88,6 +102,9 @@ export default function LeadPriceForm() {
 
     console.log("currentStep", currentStep);
     setCurrentStepe(currentStep + 1);
+  };
+  const backStep = () => {
+    setCurrentStepe(currentStep - 1);
   };
 
   const watchedSector = form.watch("sector_of_activity");
@@ -138,11 +155,20 @@ export default function LeadPriceForm() {
       >
         {currentStep === 1 && (
           <>
+            <h2 className="text-2xl">{STEPS[currentStep - 1].title}</h2>
             <div className="space-y-2 mt-4">
-              <label
-                htmlFor="countries"
-                className="block mb-2 text-lg md:text-2xl font-medium text-[var(--text)] dark:text-white"
-              >
+              <label className="block mb-2 text-lg md:text-2xl font-medium text-[var(--text)] dark:text-white">
+                Sua Empresa está em qual cidade?
+              </label>
+
+              <input
+                type="text"
+                className="block w-full p-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                {...form.register("city")}
+              />
+            </div>
+            <div className="space-y-2 mt-4">
+              <label className="block mb-2 text-lg md:text-2xl font-medium text-[var(--text)] dark:text-white">
                 Qual o seu sector de atividade?
               </label>
               <select
@@ -263,11 +289,55 @@ export default function LeadPriceForm() {
               />
               <p className="text-center text-2xl">{form.watch("lead_month")}</p>
             </div>
+            <div className="space-y-2 mt-4">
+              <label className="block mb-2 text-lg md:text-2xl font-medium text-[var(--text)] dark:text-white">
+                Cole aqui o link de suas redes sociais
+              </label>
+
+              <input
+                type="text"
+                className="block w-full p-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                {...form.register("socialLinks")}
+              />
+            </div>
+            <div className="space-y-2 mt-4  ">
+              <label className="block mb-2 text-lg md:text-2xl font-medium text-[var(--text)] dark:text-white">
+                Você já investiu em Marketing?
+              </label>
+
+              <div className="flex items-center mb-4 ">
+                <input
+                  id="sim"
+                  {...form.register("investiment_mkt")}
+                  type="radio"
+                  value="Sim"
+                  name="default-radio"
+                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                />
+                <label className="ms-2 text-sm font-medium text-white">
+                  Sim, já investi
+                </label>
+              </div>
+              <div className="flex items-center text-white">
+                <input
+                  {...form.register("investiment_mkt")}
+                  id="nao"
+                  type="radio"
+                  value="Não"
+                  name="default-radio"
+                  className="Namew-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                />
+                <label className="ms-2 text-sm font-medium text-white ">
+                  Não
+                </label>
+              </div>
+            </div>
           </>
         )}
 
         {currentStep === 2 && (
           <>
+            <h2 className="text-2xl">{STEPS[currentStep - 1].title}</h2>
             <div className="mb-6">
               <label
                 htmlFor="large-input"
@@ -299,6 +369,17 @@ export default function LeadPriceForm() {
               )}
             </div>
 
+            <div className="space-y-2 mt-4">
+              <label className="block mb-2 text-lg md:text-2xl font-medium text-[var(--text)] dark:text-white">
+                Qual a sua função na Empresa?
+              </label>
+
+              <input
+                type="text"
+                className="block w-full p-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                {...form.register("role")}
+              />
+            </div>
             <div className="mb-6">
               <label
                 htmlFor="large-input"
@@ -329,13 +410,52 @@ export default function LeadPriceForm() {
                 </p>
               )}
             </div>
+            <div className="space-y-2 mt-4">
+              <label className="block mb-2 text-lg md:text-2xl font-medium text-[var(--text)] dark:text-white">
+                Seu Telefone
+              </label>
+
+              <input
+                type="number"
+                className="block w-full p-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                {...form.register("phone")}
+              />
+              {form.formState.errors.phone && (
+                <p className="text-red-500 text-sm mt-1 flex items-center">
+                  <svg
+                    className="w-4 h-4 mr-1"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  {form.formState.errors.phone?.message}
+                </p>
+              )}
+            </div>
+          </>
+        )}
+
+        {currentStep === 3 && (
+          <>
+            <h2 className="text-2xl">{STEPS[currentStep - 1].title}</h2>
           </>
         )}
         <button
           className="cursor-pointer text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          onClick={() => backStep()}
+        >
+          Voltar
+        </button>
+        <button
+          className={`cursor-pointer text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 ${currentStep === 3 ? "hidden" : ""}`}
           onClick={() => nextStep()}
         >
-          Próximo
+          {currentStep === 2 ? "Enviar e Ver resulgado" : "Próximo"}
         </button>
 
         <div className="flex w-full mt-2 border border-blue-500 flex-col text-center justify-center">
