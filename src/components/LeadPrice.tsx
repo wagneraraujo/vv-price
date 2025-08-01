@@ -144,6 +144,7 @@ export default function LeadPriceForm() {
 
   return (
     <>
+      <img src="/logo.webp" className="text-center mx-auto" />
       <form
         className="max-w-lg mx-auto space-y-8"
         onSubmit={form.handleSubmit(onSubmit)}
