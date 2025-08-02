@@ -146,20 +146,18 @@ export default function LeadPriceForm() {
   return (
     <div className="slide-in-right">
       {/* Progress Steps */}
-      <div className="flex justify-center items-center mb-12">
-        <div className="flex items-center space-x-4">
+      <div className="flex justify-center items-center mb-6 md:mb-12 px-4">
+        <div className="flex items-center space-x-2 md:space-x-4">
           {STEPS.map((step, index) => (
             <div key={step.id} className="flex items-center">
-              <div className={`step-indicator ${
-                currentStep === step.id ? 'active' : 
+              <div className={`step-indicator ${currentStep === step.id ? 'active' :
                 currentStep > step.id ? 'completed' : ''
-              }`}>
+                }`}>
                 {currentStep > step.id ? '✓' : step.id}
               </div>
               {index < STEPS.length - 1 && (
-                <div className={`w-16 h-1 mx-2 rounded-full ${
-                  currentStep > step.id ? 'bg-green-400' : 'bg-white/30'
-                }`}></div>
+                <div className={`w-8 md:w-16 h-1 mx-1 md:mx-2 rounded-full ${currentStep > step.id ? 'bg-green-400' : 'bg-white/30'
+                  }`}></div>
               )}
             </div>
           ))}
@@ -167,23 +165,23 @@ export default function LeadPriceForm() {
       </div>
 
       <form
-        className="form-glass max-w-2xl mx-auto p-8 md:p-12 space-y-8"
+        className="form-glass max-w-2xl mx-auto p-4 sm:p-6 md:p-8 lg:p-12 space-y-6 md:space-y-8"
         onSubmit={form.handleSubmit(onSubmit)}
       >
         {currentStep === 1 && (
           <div className="fade-in">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-3">
+            <div className="text-center mb-6 md:mb-8">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-2 md:mb-3 px-2">
                 {STEPS[currentStep - 1].title}
               </h2>
-              <p className="text-gray-600 text-lg">
+              <p className="text-gray-600 text-base md:text-lg px-2">
                 Conte-nos sobre sua empresa para calcularmos o investimento ideal
               </p>
             </div>
 
-            <div className="space-y-6">
-              <div className="space-y-3">
-                <label className="block text-lg font-semibold text-gray-700">
+            <div className="space-y-4 md:space-y-6">
+              <div className="space-y-2 md:space-y-3">
+                <label className="block text-base md:text-lg font-semibold text-gray-700">
                   🏙️ Em qual cidade sua empresa está localizada?
                 </label>
                 <input
@@ -193,17 +191,16 @@ export default function LeadPriceForm() {
                   {...form.register("city")}
                 />
               </div>
-              <div className="space-y-3">
-                <label className="block text-lg font-semibold text-gray-700">
+              <div className="space-y-2 md:space-y-3">
+                <label className="block text-base md:text-lg font-semibold text-gray-700">
                   🏢 Qual o setor de atividade da sua empresa?
                 </label>
                 <select
                   {...form.register("sector_of_activity")}
-                  className={`select-modern w-full ${
-                    form.formState.errors.sector_of_activity
-                      ? "border-red-400 focus:border-red-500"
-                      : ""
-                  }`}
+                  className={`select-modern w-full ${form.formState.errors.sector_of_activity
+                    ? "border-red-400 focus:border-red-500"
+                    : ""
+                    }`}
                 >
                   <option value="">Selecione seu setor...</option>
                   <option value="Formação">📚 Formação</option>
@@ -248,8 +245,8 @@ export default function LeadPriceForm() {
                 )}
               </div>
 
-              <div className="space-y-3">
-                <label className="block text-lg font-semibold text-gray-700">
+              <div className="space-y-2 md:space-y-3">
+                <label className="block text-base md:text-lg font-semibold text-gray-700">
                   💰 Qual a faturação anual da sua empresa?
                 </label>
                 <select
@@ -274,39 +271,72 @@ export default function LeadPriceForm() {
                 )}
               </div>
 
-              <div className="space-y-4">
-                <label className="block text-lg font-semibold text-gray-700">
+              <div className="space-y-3 md:space-y-4">
+                <label className="block text-base md:text-lg font-semibold text-gray-700">
                   🎯 Quantos leads por mês você deseja?
                 </label>
-                <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-xl border border-blue-100">
-                  <input
-                    type="range"
-                    value={form.watch("lead_month") || 10}
-                    min="10"
-                    max="1000"
-                    onChange={(e) => {
-                      form.setValue("lead_month", Number(e.target.value));
-                    }}
-                    className="range-modern w-full"
-                  />
-                  <div className="flex justify-between text-sm text-gray-500 mt-2">
-                    <span>10</span>
-                    <span>500</span>
-                    <span>1000</span>
+                <div className="bg-gradient-to-br from-slate-50 via-white to-blue-50 p-4 md:p-6 lg:p-8 rounded-xl md:rounded-2xl border border-slate-200 shadow-lg">
+                  <div className="range-container relative mb-4 md:mb-6">
+                    <div
+                      className="absolute top-1/2 left-0 h-2 md:h-3 bg-gradient-to-r from-blue-900 to-slate-900 rounded-full transform -translate-y-1/2 transition-all duration-300 shadow-md"
+                      style={{
+                        width: `${((form.watch("lead_month") || 10) - 10) / (1000 - 10) * 100}%`,
+                        zIndex: 1
+                      }}
+                    ></div>
+                    <input
+                      type="range"
+                      value={form.watch("lead_month") || 10}
+                      min="10"
+                      max="1000"
+                      onChange={(e) => {
+                        form.setValue("lead_month", Number(e.target.value));
+                      }}
+                      className="range-modern w-full relative z-10"
+                      style={{ background: 'transparent' }}
+                    />
                   </div>
-                  <div className="text-center mt-4">
-                    <div className="inline-flex items-center space-x-2 bg-white px-6 py-3 rounded-full shadow-lg">
-                      <span className="text-2xl">🎯</span>
-                      <span className="text-3xl font-bold text-gray-800">
-                        {form.watch("lead_month")}
-                      </span>
-                      <span className="text-gray-600">leads/mês</span>
+
+                  <div className="flex justify-between text-xs md:text-sm font-medium text-gray-600 mb-4 md:mb-6">
+                    <span className="flex items-center">
+                      <span className="w-2 h-2 bg-slate-400 rounded-full mr-1 md:mr-2"></span>
+                      <span className="hidden sm:inline">10 leads</span>
+                      <span className="sm:hidden">10</span>
+                    </span>
+                    <span className="flex items-center">
+                      <span className="w-2 h-2 bg-blue-800 rounded-full mr-1 md:mr-2"></span>
+                      <span className="hidden sm:inline">500 leads</span>
+                      <span className="sm:hidden">500</span>
+                    </span>
+                    <span className="flex items-center">
+                      <span className="w-2 h-2 bg-slate-900 rounded-full mr-1 md:mr-2"></span>
+                      <span className="hidden sm:inline">1000+ leads</span>
+                      <span className="sm:hidden">1000+</span>
+                    </span>
+                  </div>
+
+                  <div className="text-center">
+                    <div className="inline-flex items-center space-x-2 md:space-x-3 bg-white px-4 md:px-6 lg:px-8 py-3 md:py-4 rounded-xl md:rounded-2xl shadow-xl border border-gray-100">
+                      <div className="text-2xl md:text-3xl animate-pulse">🎯</div>
+                      <div className="text-center">
+                        <div className="text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-blue-900 to-slate-900 bg-clip-text text-transparent">
+                          {form.watch("lead_month")}
+                        </div>
+                        <div className="text-xs md:text-sm font-medium text-gray-500">leads por mês</div>
+                      </div>
+                    </div>
+
+                    <div className="mt-3 md:mt-4 text-xs md:text-sm text-gray-600">
+                      {(form.watch("lead_month") || 10) <= 50 && "🌱 Crescimento inicial"}
+                      {(form.watch("lead_month") || 10) > 50 && (form.watch("lead_month") || 10) <= 200 && "📈 Expansão moderada"}
+                      {(form.watch("lead_month") || 10) > 200 && (form.watch("lead_month") || 10) <= 500 && "🚀 Crescimento acelerado"}
+                      {(form.watch("lead_month") || 10) > 500 && "💎 Escala empresarial"}
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="space-y-3">
-                <label className="block text-lg font-semibold text-gray-700">
+              <div className="space-y-2 md:space-y-3">
+                <label className="block text-base md:text-lg font-semibold text-gray-700">
                   🌐 Link das suas redes sociais (opcional)
                 </label>
                 <input
@@ -317,33 +347,33 @@ export default function LeadPriceForm() {
                 />
               </div>
 
-              <div className="space-y-4">
-                <label className="block text-lg font-semibold text-gray-700">
+              <div className="space-y-3 md:space-y-4">
+                <label className="block text-base md:text-lg font-semibold text-gray-700">
                   📊 Você já investiu em Marketing Digital antes?
                 </label>
-                <div className="grid grid-cols-2 gap-4">
-                  <label className="flex items-center space-x-3 bg-white p-4 rounded-xl border-2 border-gray-200 cursor-pointer hover:border-blue-300 transition-all">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
+                  <label className="flex items-center space-x-2 md:space-x-3 bg-white p-3 md:p-4 rounded-lg md:rounded-xl border-2 border-gray-200 cursor-pointer hover:border-blue-300 transition-all">
                     <input
                       {...form.register("investiment_mkt")}
                       type="radio"
                       value="true"
-                      className="w-5 h-5 text-blue-600"
+                      className="w-4 md:w-5 h-4 md:h-5 text-blue-600"
                     />
-                    <div className="flex items-center space-x-2">
-                      <span className="text-2xl">✅</span>
-                      <span className="font-medium text-gray-700">Sim, já investi</span>
+                    <div className="flex items-center space-x-1 md:space-x-2">
+                      <span className="text-lg md:text-2xl">✅</span>
+                      <span className="font-medium text-gray-700 text-sm md:text-base">Sim, já investi</span>
                     </div>
                   </label>
-                  <label className="flex items-center space-x-3 bg-white p-4 rounded-xl border-2 border-gray-200 cursor-pointer hover:border-blue-300 transition-all">
+                  <label className="flex items-center space-x-2 md:space-x-3 bg-white p-3 md:p-4 rounded-lg md:rounded-xl border-2 border-gray-200 cursor-pointer hover:border-blue-300 transition-all">
                     <input
                       {...form.register("investiment_mkt")}
                       type="radio"
                       value="false"
-                      className="w-5 h-5 text-blue-600"
+                      className="w-4 md:w-5 h-4 md:h-5 text-blue-600"
                     />
-                    <div className="flex items-center space-x-2">
-                      <span className="text-2xl">🆕</span>
-                      <span className="font-medium text-gray-700">Não, é minha primeira vez</span>
+                    <div className="flex items-center space-x-1 md:space-x-2">
+                      <span className="text-lg md:text-2xl">🆕</span>
+                      <span className="font-medium text-gray-700 text-sm md:text-base">Não, é minha primeira vez</span>
                     </div>
                   </label>
                 </div>
@@ -354,18 +384,18 @@ export default function LeadPriceForm() {
 
         {currentStep === 2 && (
           <div className="fade-in">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-3">
+            <div className="text-center mb-6 md:mb-8">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-2 md:mb-3 px-2">
                 {STEPS[currentStep - 1].title}
               </h2>
-              <p className="text-gray-600 text-lg">
+              <p className="text-gray-600 text-base md:text-lg px-2">
                 Quase lá! Precisamos dos seus dados para enviar o resultado
               </p>
             </div>
 
-            <div className="space-y-6">
-              <div className="space-y-3">
-                <label className="block text-lg font-semibold text-gray-700">
+            <div className="space-y-4 md:space-y-6">
+              <div className="space-y-2 md:space-y-3">
+                <label className="block text-base md:text-lg font-semibold text-gray-700">
                   👤 Qual é o seu nome?
                 </label>
                 <input
@@ -384,8 +414,8 @@ export default function LeadPriceForm() {
                 )}
               </div>
 
-              <div className="space-y-3">
-                <label className="block text-lg font-semibold text-gray-700">
+              <div className="space-y-2 md:space-y-3">
+                <label className="block text-base md:text-lg font-semibold text-gray-700">
                   💼 Qual é a sua função na empresa?
                 </label>
                 <input
@@ -396,8 +426,8 @@ export default function LeadPriceForm() {
                 />
               </div>
 
-              <div className="space-y-3">
-                <label className="block text-lg font-semibold text-gray-700">
+              <div className="space-y-2 md:space-y-3">
+                <label className="block text-base md:text-lg font-semibold text-gray-700">
                   📧 Qual é o seu email?
                 </label>
                 <input
@@ -416,8 +446,8 @@ export default function LeadPriceForm() {
                 )}
               </div>
 
-              <div className="space-y-3">
-                <label className="block text-lg font-semibold text-gray-700">
+              <div className="space-y-2 md:space-y-3">
+                <label className="block text-base md:text-lg font-semibold text-gray-700">
                   📱 Qual é o seu telefone?
                 </label>
                 <input
@@ -441,41 +471,41 @@ export default function LeadPriceForm() {
 
         {currentStep === 3 && (
           <div className="fade-in">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-3">
+            <div className="text-center mb-6 md:mb-8">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-2 md:mb-3 px-2">
                 🎉 Resultado Calculado!
               </h2>
-              <p className="text-gray-600 text-lg">
+              <p className="text-gray-600 text-base md:text-lg px-2">
                 Baseado nas informações da sua empresa, aqui está o investimento recomendado
               </p>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-4 md:space-y-6">
               <div className="price-card pulse-glow">
                 <div className="relative z-10">
-                  <div className="text-center mb-6">
-                    <div className="text-6xl mb-4">💰</div>
-                    <h3 className="text-2xl font-bold mb-2">Investimento Mensal Recomendado</h3>
+                  <div className="text-center mb-4 md:mb-6">
+                    <div className="text-4xl md:text-5xl lg:text-6xl mb-3 md:mb-4">💰</div>
+                    <h3 className="text-lg md:text-xl lg:text-2xl font-bold mb-2">Investimento Mensal Recomendado</h3>
                   </div>
-                  
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div className="bg-white/20 backdrop-blur-sm rounded-xl p-6 text-center">
-                      <div className="text-sm font-medium mb-2 opacity-90">Valor Total Mensal</div>
-                      <div className="text-4xl font-bold">{formatPrice(totalMontlyPrice)}</div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                    <div className="bg-white/20 backdrop-blur-sm rounded-lg md:rounded-xl p-4 md:p-6 text-center">
+                      <div className="text-xs md:text-sm font-medium mb-2 opacity-90">Valor Total Mensal</div>
+                      <div className="text-2xl md:text-3xl lg:text-4xl font-bold">{formatPrice(totalMontlyPrice)}</div>
                     </div>
-                    
-                    <div className="bg-white/20 backdrop-blur-sm rounded-xl p-6 text-center">
-                      <div className="text-sm font-medium mb-2 opacity-90">Preço por Lead</div>
-                      <div className="text-4xl font-bold">{formatPrice(pricePerLead)}</div>
+
+                    <div className="bg-white/20 backdrop-blur-sm rounded-lg md:rounded-xl p-4 md:p-6 text-center">
+                      <div className="text-xs md:text-sm font-medium mb-2 opacity-90">Preço por Lead</div>
+                      <div className="text-2xl md:text-3xl lg:text-4xl font-bold">{formatPrice(pricePerLead)}</div>
                     </div>
                   </div>
 
-                  <div className="mt-8 p-6 bg-white/10 rounded-xl">
-                    <h4 className="text-lg font-semibold mb-4 flex items-center">
-                      <span className="text-2xl mr-2">📊</span>
+                  <div className="mt-6 md:mt-8 p-4 md:p-6 bg-white/10 rounded-lg md:rounded-xl">
+                    <h4 className="text-base md:text-lg font-semibold mb-3 md:mb-4 flex items-center">
+                      <span className="text-xl md:text-2xl mr-2">📊</span>
                       Detalhamento do Cálculo
                     </h4>
-                    <div className="space-y-3 text-sm">
+                    <div className="space-y-2 md:space-y-3 text-xs md:text-sm">
                       <div className="flex justify-between">
                         <span>Preço base por setor:</span>
                         <span className="font-medium">{formatPrice(priceBreakDown.basePrice)}</span>
@@ -488,27 +518,27 @@ export default function LeadPriceForm() {
                         <span>Desconto por volume:</span>
                         <span className="font-medium text-green-200">-{formatPrice(priceBreakDown.volumeDiscount)}</span>
                       </div>
-                      <div className="border-t border-white/20 pt-3 flex justify-between font-bold text-lg">
+                      <div className="border-t border-white/20 pt-2 md:pt-3 flex justify-between font-bold text-sm md:text-base lg:text-lg">
                         <span>Total Final:</span>
                         <span>{formatPrice(priceBreakDown.finalPrice)}</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="mt-6 text-center">
-                    <p className="text-sm opacity-90">
+                  <div className="mt-4 md:mt-6 text-center">
+                    <p className="text-xs md:text-sm opacity-90 px-2">
                       ✨ Este valor foi calculado com base no seu setor, faturamento e volume de leads desejado
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
-                <div className="flex items-start space-x-3">
-                  <div className="text-2xl">💡</div>
+              <div className="bg-blue-50 border border-blue-200 rounded-lg md:rounded-xl p-4 md:p-6">
+                <div className="flex items-start space-x-2 md:space-x-3">
+                  <div className="text-xl md:text-2xl">💡</div>
                   <div>
-                    <h4 className="font-semibold text-blue-800 mb-2">Próximos Passos</h4>
-                    <ul className="text-blue-700 text-sm space-y-1">
+                    <h4 className="font-semibold text-blue-800 mb-2 text-sm md:text-base">Próximos Passos</h4>
+                    <ul className="text-blue-700 text-xs md:text-sm space-y-1">
                       <li>• Nossa equipe entrará em contato em até 24 horas</li>
                       <li>• Faremos uma análise detalhada do seu negócio</li>
                       <li>• Apresentaremos uma proposta personalizada</li>
@@ -521,21 +551,21 @@ export default function LeadPriceForm() {
           </div>
         )}
         {/* Navigation Buttons */}
-        <div className="flex justify-between items-center pt-8 border-t border-gray-200">
+        <div className="flex flex-col sm:flex-row justify-between items-center pt-6 md:pt-8 border-t border-gray-200 gap-3 sm:gap-0">
           {currentStep > 1 && (
             <button
               type="button"
-              className="btn-secondary"
+              className="btn-secondary w-full sm:w-auto order-2 sm:order-1"
               onClick={() => backStep()}
             >
               ← Voltar
             </button>
           )}
-          
+
           {currentStep < 3 && (
             <button
               type="button"
-              className={`btn-primary ml-auto ${currentStep === 1 ? 'w-full' : ''}`}
+              className={`btn-primary order-1 sm:order-2 ${currentStep === 1 ? 'w-full' : 'w-full sm:w-auto sm:ml-auto'}`}
               onClick={() => nextStep()}
             >
               {currentStep === 2 ? "🎯 Calcular Investimento" : "Continuar →"}
@@ -546,11 +576,11 @@ export default function LeadPriceForm() {
             <div className="w-full text-center">
               <button
                 type="submit"
-                className="btn-primary px-12 py-4 text-lg"
+                className="btn-primary w-full sm:w-auto px-8 md:px-12 py-3 md:py-4 text-base md:text-lg"
               >
                 📧 Receber Proposta Detalhada
               </button>
-              <p className="text-gray-500 text-sm mt-3">
+              <p className="text-gray-500 text-xs md:text-sm mt-2 md:mt-3 px-2">
                 Clique para finalizar e receber nossa proposta personalizada
               </p>
             </div>
